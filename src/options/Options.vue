@@ -1,19 +1,18 @@
-<script setup lang="ts">
-import { storageDemo } from '~/logic/storage'
+<script setup>
+import { h, onMounted, ref } from 'vue'
 </script>
 
 <template>
-  <main class="px-4 py-10 text-center text-gray-700 dark:text-gray-200">
-    <img src="/assets/icon.svg" class="icon-btn mx-2 text-2xl" alt="extension icon">
-    <div>Options</div>
-    <p class="mt-2 opacity-50">
-      This is the options page
-    </p>
-
-    <input v-model="storageDemo" class="border border-gray-400 rounded px-2 py-1 mt-2">
-
-    <div class="mt-4">
-      Powered by Vite <pixelarticons-zap class="align-middle" />
-    </div>
-  </main>
+  <iframe width="500" height="500" allow="camera *;microphone *" src="http://localhost:5173/" />
 </template>
+
+<style scoped>
+.output_canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width:300px;
+  height: 300px;
+}
+</style>

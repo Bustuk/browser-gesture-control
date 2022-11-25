@@ -11,7 +11,7 @@ function openOptionsPage() {
     <Logo />
     <div>Popup</div>
     <p class="mt-2 opacity-50">
-      This is the popup page
+      This is the popup page yeah!
     </p>
     <button class="btn mt-2" @click="openOptionsPage">
       Open Options

@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
-import App from './Options.vue'
+import Options from './Options.vue'
 import '../styles'
 
-const app = createApp(App)
+const app = createApp(Options)
 app.mount('#app')
