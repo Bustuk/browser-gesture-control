@@ -4,3 +4,9 @@ declare module '*.vue' {
   const component: any
   export default component
 }
+
+interface mappedGesture {
+  action: string
+  gesture: string
+  settings: Record<string, any>
+}

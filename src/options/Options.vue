@@ -1,18 +1,32 @@
-<script setup>
-import { h, onMounted, ref } from 'vue'
+<script setup lang="ts">
+import { NCard, NLayout } from 'naive-ui'
+import GestureMapping from '../components/GestureMapping.vue'
+import { mappedGestures } from '~/logic'
 </script>
 
 <template>
-  <iframe width="500" height="500" allow="camera *;microphone *" src="http://localhost:5173/" />
+  <n-layout :embedded="true">
+    <n-card
+      style="width: 800px"
+      title="Left Hand"
+      :bordered="true"
+      size="huge"
+    >
+      <GestureMapping v-model="mappedGestures" />
+    </n-card>
+  </n-layout>
 </template>
 
-<style scoped>
-.output_canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1;
-  width:300px;
-  height: 300px;
+<style >
+#app {
+  height: 100vh;
+  display: flex;
+}
+
+.n-layout-scroll-container {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
