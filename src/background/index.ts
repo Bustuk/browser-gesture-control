@@ -1,6 +1,7 @@
 import type { Tabs } from 'webextension-polyfill'
 import browser from 'webextension-polyfill'
 import { onMessage, sendMessage } from 'webext-bridge'
+import { pagesConfig } from '~/logic/storage'
 if (__DEV__)
   import('./contentScriptHMR')
 browser.runtime.onInstalled.addListener((): void => {
@@ -44,5 +45,14 @@ onMessage('get-current-tab', async () => {
     return {
       title: undefined,
     }
+  }
+})
+type params = Record<string, string>
+onMessage('page-update', async ({host, cameraStatus}: params) => {
+  try {
+    pagesConfig.value[host].cameraStatus = cameraStatus
+  }
+  catch {
+
   }
 })

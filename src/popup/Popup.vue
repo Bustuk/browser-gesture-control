@@ -1,15 +1,33 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onBeforeMount, ref } from 'vue'
 import { NButton, NCard, NPopover, NSwitch } from 'naive-ui'
-import { storageDemo } from '~/logic/storage'
-
+import { tabs as browserTabs } from 'webextension-polyfill'
+import { sendMessage } from 'webext-bridge'
+import { pagesConfig } from '~/logic/storage'
 function openOptionsPage() {
   browser.runtime.openOptionsPage()
 }
+
+const host = ref('')
+
 const active = ref(false)
-function toogle() {
-  // turn on and off the recognition
+
+const toggle = (val: boolean) => {
+  active.value = val
+  pagesConfig.value[host.value].active = val
+  console.log(pagesConfig)
 }
+
+onBeforeMount(async () => {
+  const tabs = await browserTabs.query({ active: true, currentWindow: true })
+  const tab = tabs.pop()
+  if (tab) {
+    const url = (new URL(tab.url || '')).host
+    host.value = url
+    if (pagesConfig.value[url])
+    pagesConfig.value.active = pagesConfig.value[url]
+  }
+})
 </script>
 
 <template>
@@ -39,7 +57,7 @@ function toogle() {
     </n-button>
     <template #action>
       Toogle recognition
-      <n-switch v-model:value="active" />
+      <n-switch :value="active" :on-update:value="toggle" />
     </template>
   </n-card>
 </template>
