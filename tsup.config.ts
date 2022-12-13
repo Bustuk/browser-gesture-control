@@ -14,6 +14,7 @@ export default defineConfig(() => ({
   sourcemap: isDev ? 'inline' : false,
   define: {
     __DEV__: JSON.stringify(isDev),
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
   },
   minifyWhitespace: !isDev,
   minifySyntax: !isDev,

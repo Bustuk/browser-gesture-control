@@ -47,10 +47,19 @@ onMessage('get-current-tab', async () => {
     }
   }
 })
-type params = Record<string, string>
-onMessage('page-update', async ({host, cameraStatus}: params) => {
+console.log('pagesConfig', pagesConfig.value)
+type params = {
+  host: string,
+  cameraStatus: 'granted' | 'prompt' | 'denied'
+}
+onMessage('page-update', async ({ data }: { data: params}) => {
   try {
-    pagesConfig.value[host].cameraStatus = cameraStatus
+    console.log('page update', data)
+    if (pagesConfig.value[data.host]) {}
+    pagesConfig.value[data.host] = {
+      ...(pagesConfig.value[data.host] || {}),
+      cameraStatus: data.cameraStatus,
+    }
   }
   catch {
 

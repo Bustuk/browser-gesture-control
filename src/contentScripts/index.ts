@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { onMessage, sendMessage } from 'webext-bridge'
-import { createIframe, postMessageToIframe, getCameraPermission } from './utils/index'
+import { createIframe, postMessageToIframe, getCameraPermission, promptCameraPermission } from './utils/index'
 import { watch } from 'vue'
 
 (async () => {
@@ -16,7 +16,6 @@ import { watch } from 'vue'
         break;
       case 'prompt':
         console.log('camera prompt')
-        navigator.mediaDevices.getUserMedia({ video: true })
         break;
       case 'denied':
         console.log('camera denied')
@@ -28,5 +27,10 @@ import { watch } from 'vue'
   // communication example: send previous tab title from background page
   onMessage('tab-prev', ({ data }) => {
     console.log(`[vitesse-webext] Navigate from page "${data.title}"`)
+  })
+
+  onMessage('ask-for-camera-permission', ({ data }) => {
+    console.log('Asking for permission')
+    promptCameraPermission()
   })
 })()
