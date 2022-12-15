@@ -20,25 +20,12 @@ export function postMessageToIframe(msg: string) {
     throw new Error('Iframe not initialized')
 }
 
-const defaultCallback = (event: MessageEvent) => {
-  console.log('Dostałem EVENT', event.data)
-  if (event.data.message === 'gesture') {
-    if (event.data.value === 'victory') {
-      window.scrollBy({
-        top: -135,
-        behavior: 'smooth',
-      })
+export function registerIframeMessageListener(key: string, callback: (data: any) => void) {
+  addEventListener('message', (event: MessageEvent) => {
+    console.log('Dostałem EVENT', event.data)
+    if (event.data.message === key) {
+      callback(event.data)
     }
-    if (event.data.value === 'flat') {
-      window.scrollBy({
-        top: 135,
-        behavior: 'smooth',
-      })
-    }
-  }
-}
-
-export function registerIframeMessageListener(callback: (event: MessageEvent) => void = defaultCallback) {
-  addEventListener('message', callback)
+  })
 }
 

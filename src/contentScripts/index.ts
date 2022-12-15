@@ -1,14 +1,29 @@
 /* eslint-disable no-console */
 import { onMessage, sendMessage } from 'webext-bridge'
-import { createIframe, postMessageToIframe, getCameraPermission, promptCameraPermission } from './utils/index'
+import { createIframe, postMessageToIframe, getCameraPermission, promptCameraPermission, registerIframeMessageListener } from './utils/index'
 import { watch } from 'vue'
+import GestureService from './services/gesture';
+import ActionService from './services/action';
+import { storage } from 'webextension-polyfill'
+
+async function getMappedGestures() {
+  try {
+    return JSON.parse((await storage.local.get('webext-mapped-gestures'))['webext-mapped-gestures'])
+  } catch (e) {
+    return []
+  }
+}
 
 (async () => {
   const permissionObj = await getCameraPermission();
+  const mappedGestures = await getMappedGestures();
+  const actionService = new ActionService(mappedGestures);
+  const gestureService = new GestureService(mappedGestures, actionService);
+  const callback = gestureService.run.bind(gestureService)
+  registerIframeMessageListener('gesture', callback);
 
-  watch(permissionObj.state, async (newPermissions, oldPermissions) => {
+  watch(permissionObj.state, async (newPermissions) => {
     if (!newPermissions) return;
-    console.log('WAAATCH', newPermissions, oldPermissions)
     switch (newPermissions) {
       case 'granted':
         await createIframe()
@@ -22,7 +37,7 @@ import { watch } from 'vue'
         break;
     }
     sendMessage('page-update', { cameraStatus: newPermissions, host: location.host })
-  }, { deep: true });
+  }, { deep: true, immediate: true });
   
   // communication example: send previous tab title from background page
   onMessage('tab-prev', ({ data }) => {

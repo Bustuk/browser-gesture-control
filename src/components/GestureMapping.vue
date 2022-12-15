@@ -18,15 +18,24 @@ const closeOptions = () => {
 const openOptions = () => {
   showSettings.value = true
 }
+
 const actions = [
   {
-    label: 'Scroll down',
-    value: 'scroll-down',
+    label: 'Scroll Down',
+    value: 'scrollDown',
   },
   {
     label: 'Scroll Up',
-    value: 'scroll-up',
+    value: 'scrollUp',
   },
+  {
+    label: 'Play',
+    value: 'play',
+  },
+  {
+    label: 'Pause',
+    value: 'pause',
+  }
 ]
 
 const gestures = [
