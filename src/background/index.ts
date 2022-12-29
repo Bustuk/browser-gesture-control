@@ -1,7 +1,7 @@
 import type { Tabs } from 'webextension-polyfill'
 import browser from 'webextension-polyfill'
 import { onMessage, sendMessage } from 'webext-bridge'
-import { pagesConfig } from '~/logic/storage'
+import { pagesConfig, availableLabels } from '~/logic/storage'
 if (__DEV__)
   import('./contentScriptHMR')
 browser.runtime.onInstalled.addListener((): void => {
@@ -55,13 +55,22 @@ type params = {
 onMessage('page-update', async ({ data }: { data: params}) => {
   try {
     console.log('page update', data)
-    if (pagesConfig.value[data.host]) {}
     pagesConfig.value[data.host] = {
       ...(pagesConfig.value[data.host] || {}),
       cameraStatus: data.cameraStatus,
     }
   }
-  catch {
+  catch(err){
+    console.error(err)
+  }
+})
 
+onMessage('labels-update', async ({ data }: { data: string[]}) => {
+  try {
+    console.log('labels update', data)
+    availableLabels.value = data
+  }
+  catch(err){
+    console.error(err)
   }
 })

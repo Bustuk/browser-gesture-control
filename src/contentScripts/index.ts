@@ -14,6 +14,10 @@ async function getMappedGestures() {
   }
 }
 
+onMessage('toggle-recognition', ({ data }: { data: {active: boolean} }) => {
+  postMessageToIframe(data?.active ? 'start' : 'stop')
+});
+
 (async () => {
   const permissionObj = await getCameraPermission();
   const mappedGestures = await getMappedGestures();
@@ -48,4 +52,9 @@ async function getMappedGestures() {
     console.log('Asking for permission')
     promptCameraPermission()
   })
+
+  const labels = localStorage.getItem('gesture-recognition-model-labels')
+  if (labels) {
+    sendMessage('labels-update', JSON.parse(labels))
+  }
 })()

@@ -40,10 +40,41 @@ export default class Action {
   }
 
   play() {
-    // TODO: play video
+    const player = this.getPlayer()
+    if (player) {
+      player.play()
+    }
   }
 
   pause() {
-    // TODO: pause video
+    const player = this.getPlayer()
+    if (player) {
+      player.pause()
+    }
+  }
+
+  getPlayer() {
+    const players = document.querySelectorAll('video');
+    if (players.length === 0) {
+      return undefined
+    }
+    //single player, no problems
+    if (players.length === 1) {
+      return players[0]
+    } 
+    const customPlayer = this.getCustomPlayer();
+    // @todo implement custom handlers for specific pages
+    return customPlayer ? customPlayer : undefined;
+  }
+
+  getCustomPlayer() {
+    // @todo move to separate helper class
+    if (location.href.includes('primevideo')) {
+      const players = document.querySelectorAll('video');
+      if (players.length === 2) {
+        return players[0]
+      }
+    }
+    return undefined;
   }
 }

@@ -2,8 +2,14 @@
 import { NDynamicInput, NSelect } from 'naive-ui'
 import { computed, defineEmits, ref } from 'vue'
 import GestureSettings from './GestureSettings.vue'
+type label = {
+  label: string,
+  value: string
+}
+
 const props = defineProps<{
-  modelValue: mappedGesture[]
+  modelValue: mappedGesture[],
+  labels: label[]
 }>()
 
 const emit = defineEmits<{
@@ -38,23 +44,10 @@ const actions = [
   }
 ]
 
-const gestures = [
-  {
-    label: 'victory',
-    value: 'victory',
-  },
-  {
-    label: 'pause',
-    value: 'pause',
-  },
-  {
-    label: 'flat',
-    value: 'flat',
-  },
-]
+
 
 const filteredGestures = computed(() => {
-  return gestures.filter((gesture) => {
+  return props.labels.filter((gesture) => {
     return !props.modelValue.some(value => value.gesture === gesture.value)
   })
 })

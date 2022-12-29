@@ -22,7 +22,8 @@ const toggle = (val: boolean) => {
     ...(pagesConfig.value[host.value] || {}),
     active: val,
   }
-  console.log(pagesConfig)
+  if (!currentTabId.value) return;
+  sendMessage('toggle-recognition', { host: host.value, active: active.value }, { context: 'content-script', tabId: currentTabId.value })
 }
 
 onBeforeMount(async () => {

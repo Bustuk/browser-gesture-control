@@ -7,3 +7,4 @@ interface PageConfig {
 type PagesConfigType = Record<string, PageConfig>
 export const pagesConfig = useStorageLocal('webext-active-pages', {} as PagesConfigType, { listenToStorageChanges: true })
 export const mappedGestures = useStorageLocal('webext-mapped-gestures', [] as mappedGesture[], { listenToStorageChanges: true })
+export const availableLabels = useStorageLocal('webext-available-labels', [] as string[], { listenToStorageChanges: true })
