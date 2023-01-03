@@ -15,7 +15,7 @@ async function getMappedGestures() {
 }
 
 onMessage('toggle-recognition', ({ data }: { data: {active: boolean} }) => {
-  postMessageToIframe(data?.active ? 'start' : 'stop')
+  postMessageToIframe(data?.active ? 'startRecognition' : 'stopRecognition')
 });
 
 (async () => {
@@ -31,7 +31,7 @@ onMessage('toggle-recognition', ({ data }: { data: {active: boolean} }) => {
     switch (newPermissions) {
       case 'granted':
         await createIframe()
-        postMessageToIframe('start')
+        postMessageToIframe('startRecognition')
         break;
       case 'prompt':
         console.log('camera prompt')

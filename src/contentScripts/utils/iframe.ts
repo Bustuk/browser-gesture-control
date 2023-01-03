@@ -1,6 +1,6 @@
 let iframe: null | HTMLIFrameElement = null
 
-export async function createIframe(iframeUrl: string = 'http://localhost:5173/') {
+export async function createIframe(iframeUrl: string = 'http://localhost:5173/iframe') {
   return new Promise((resolve, reject) => {
     iframe = document.createElement('iframe')
     iframe.height = '0px'
@@ -22,7 +22,6 @@ export function postMessageToIframe(msg: string) {
 
 export function registerIframeMessageListener(key: string, callback: (data: any) => void) {
   addEventListener('message', (event: MessageEvent) => {
-    console.log('Dostałem EVENT', event.data)
     if (event.data.message === key) {
       callback(event.data)
     }
