@@ -9,65 +9,41 @@ browser.runtime.onInstalled.addListener((): void => {
   console.log('Extension installed')
 })
 
-let previousTabId = 0
-
-// communication example: send previous tab title from background page
-// see shim.d.ts for type declaration
-browser.tabs.onActivated.addListener(async ({ tabId }) => {
-  if (!previousTabId) {
-    previousTabId = tabId
-    return
-  }
-
-  let tab: Tabs.Tab
-
-  try {
-    tab = await browser.tabs.get(previousTabId)
-    previousTabId = tabId
-  }
-  catch {
-    return
-  }
-
-  // eslint-disable-next-line no-console
-  console.log('previous tab', tab)
-  sendMessage('tab-prev', { title: tab.title }, { context: 'content-script', tabId })
-})
-
-onMessage('get-current-tab', async () => {
-  try {
-    const tab = await browser.tabs.get(previousTabId)
-    return {
-      title: tab?.title,
-    }
-  }
-  catch {
-    return {
-      title: undefined,
-    }
-  }
-})
 console.log('pagesConfig', pagesConfig.value)
 type params = {
   host: string,
-  cameraStatus: 'granted' | 'prompt' | 'denied'
+  cameraStatus?: 'granted' | 'prompt' | 'denied'
+  active?: boolean
 }
+
 onMessage('page-update', async ({ data }: { data: params}) => {
   try {
-    console.log('page update', data)
+    console.log('page update data', data)
+    console.log('page update', pagesConfig.value)
     pagesConfig.value[data.host] = {
-      ...(pagesConfig.value[data.host] || {}),
-      cameraStatus: data.cameraStatus,
+      ...pagesConfig.value[data.host],
+      ...data,
     }
+    console.log('page update po', pagesConfig.value)
   }
   catch(err){
     console.error(err)
   }
 })
 
+onMessage('badge-change', async ({ data }) => {
+  console.log('badge change', data)
+  if (data.active) {
+    chrome.action.setBadgeText({text: "ON"});
+    chrome.action.setBadgeBackgroundColor({color: "#BDE7BD"});
+  } else {
+    chrome.action.setBadgeText({text: "OFF"});
+    chrome.action.setBadgeBackgroundColor({color: "#FF6962"});
+  }
+})
+
 onMessage('labels-update', async ({ data }: { data: string[]}) => {
   try {
-    console.log('labels update', data)
     availableLabels.value = data
   }
   catch(err){

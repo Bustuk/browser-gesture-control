@@ -10,15 +10,27 @@ async function getMappedGestures() {
   try {
     return JSON.parse((await storage.local.get('webext-mapped-gestures'))['webext-mapped-gestures'])
   } catch (e) {
-    return []
+    return {}
+  }
+}
+
+async function getPageConfig() {
+  try {
+    return JSON.parse((await storage.local.get('webext-pages-config'))['webext-pages-config'])
+  } catch (e) {
+    return {}
   }
 }
 
 onMessage('toggle-recognition', ({ data }: { data: {active: boolean} }) => {
   postMessageToIframe(data?.active ? 'startRecognition' : 'stopRecognition')
+  sendMessage('badge-change', { active: data.active })
 });
 
 (async () => {
+  sendMessage('badge-change', { active: false })
+  if (window.location.href.includes('localhost')) return;
+  const pageConfig = await getPageConfig();
   const permissionObj = await getCameraPermission();
   const mappedGestures = await getMappedGestures();
   const actionService = new ActionService(mappedGestures);
@@ -30,8 +42,11 @@ onMessage('toggle-recognition', ({ data }: { data: {active: boolean} }) => {
     if (!newPermissions) return;
     switch (newPermissions) {
       case 'granted':
-        await createIframe()
-        postMessageToIframe('startRecognition')
+        await createIframe(import.meta.env.VITE_GESTURE_RECOGNITION_URL)
+        if (pageConfig[location.host]?.active) {
+          postMessageToIframe('startRecognition')
+          sendMessage('badge-change', { active: true })
+        }
         break;
       case 'prompt':
         console.log('camera prompt')
@@ -42,11 +57,6 @@ onMessage('toggle-recognition', ({ data }: { data: {active: boolean} }) => {
     }
     sendMessage('page-update', { cameraStatus: newPermissions, host: location.host })
   }, { deep: true, immediate: true });
-  
-  // communication example: send previous tab title from background page
-  onMessage('tab-prev', ({ data }) => {
-    console.log(`[vitesse-webext] Navigate from page "${data.title}"`)
-  })
 
   onMessage('ask-for-camera-permission', ({ data }) => {
     console.log('Asking for permission')

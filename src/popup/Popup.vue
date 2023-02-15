@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import { onBeforeMount, ref, computed } from 'vue'
+import { onBeforeMount, ref, computed, watch } from 'vue'
 import { NButton, NCard, NPopover, NSwitch } from 'naive-ui'
 import { tabs as browserTabs } from 'webextension-polyfill'
 import { pagesConfig } from '~/logic/storage'
@@ -18,10 +18,7 @@ const cameraStatus = computed(() => {
 
 const toggle = (val: boolean) => {
   active.value = val
-  pagesConfig.value[host.value] = {
-    ...(pagesConfig.value[host.value] || {}),
-    active: val,
-  }
+  sendMessage('page-update', { active: val, host: host.value })
   if (!currentTabId.value) return;
   sendMessage('toggle-recognition', { host: host.value, active: active.value }, { context: 'content-script', tabId: currentTabId.value })
 }
@@ -53,7 +50,8 @@ const askForCameraPermission = async () => {
       footer: 'soft',
     }"
     size="large"
-    title="Air Control"
+    title="Browser Gesture Control"
+    header-style="text-align: left"
     footer-style="display: flex; justify-content: center; align-items: center; "
     content-style="display: flex; justify-content: center; align-items: center; flex-direction: column;"
   >
@@ -66,7 +64,7 @@ const askForCameraPermission = async () => {
       </n-popover>
     </template>
     Camera status: {{cameraStatus}}
-    <n-button :disabled="cameraStatus !== 'prompt'" @click="askForCameraPermission">
+    <n-button :disabled="!['prompt','unknown'].includes(cameraStatus)" @click="askForCameraPermission">
       Ask for permission
     </n-button>
     <template #action>

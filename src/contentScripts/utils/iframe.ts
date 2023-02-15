@@ -1,6 +1,6 @@
 let iframe: null | HTMLIFrameElement = null
 
-export async function createIframe(iframeUrl: string = 'http://localhost:5173/iframe') {
+export async function createIframe(iframeUrl: string = '' ) {
   return new Promise((resolve, reject) => {
     iframe = document.createElement('iframe')
     iframe.height = '0px'
@@ -10,7 +10,6 @@ export async function createIframe(iframeUrl: string = 'http://localhost:5173/if
     iframe.onload = () => resolve(iframe)
     document.body.appendChild(iframe)
   })
-  
 }
 
 export function postMessageToIframe(msg: string) {

@@ -26,7 +26,7 @@ export default class Gesture {
 
   run({ value, probability}: { value: string, probability: number}) {
     if (!this.mappedActions[value]) {
-      console.warn('Not mapped gesture', value)
+      // console.warn('Not mapped gesture', value)
       return
     } 
     if (probability > (this.mappedActions[value].threshold || 95) / 100) {
