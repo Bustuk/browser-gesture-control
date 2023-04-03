@@ -29,6 +29,10 @@ onMessage('toggle-recognition', ({ data }: { data: {active: boolean} }) => {
 
 (async () => {
   sendMessage('badge-change', { active: false })
+  const labels = localStorage.getItem('gesture-recognition-model-labels')
+  if (labels) {
+    sendMessage('labels-update', JSON.parse(labels))
+  }
   if (window.location.href.includes('localhost')) return;
   const pageConfig = await getPageConfig();
   const permissionObj = await getCameraPermission();
@@ -62,9 +66,4 @@ onMessage('toggle-recognition', ({ data }: { data: {active: boolean} }) => {
     console.log('Asking for permission')
     promptCameraPermission()
   })
-
-  const labels = localStorage.getItem('gesture-recognition-model-labels')
-  if (labels) {
-    sendMessage('labels-update', JSON.parse(labels))
-  }
 })()
